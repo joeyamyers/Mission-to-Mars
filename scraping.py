@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Import Splinter and BeautifulSoup
+# Import Splinter , BeautifulSoup, pandas
 from splinter import Browser
 from bs4 import BeautifulSoup as soup
 from webdriver_manager.chrome import ChromeDriverManager
-
-# import pandas
 import pandas as pd
 
 
