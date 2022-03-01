@@ -2,7 +2,8 @@
 .DS_Store
 # add files
 index.html
-practice.ipynb 
+practice.ipynb
+.ipynb_checkpoints
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
