@@ -1,16 +1,35 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Import Splinter , BeautifulSoup, pandas
+# Dependencies
 from splinter import Browser
 from bs4 import BeautifulSoup as soup
-from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
+import datetime as dt
+from webdriver_manager.chrome import ChromeDriverManager
 
+# func will intitialize browser, create a data dictionary, end the WebDriver and returned scraped data
+def scrape_all():
+   # Initiate headless driver for deployment
+   executable_path = {'executable_path': ChromeDriverManager().install()}
+   # headless = True, so we dont have to see the scraping in action
+   browser = Browser('chrome', **executable_path, headless=True)
 
-# set the executable path
-executable_path = {'executable_path': ChromeDriverManager().install()}
-browser = Browser('chrome', **executable_path, headless=False)
+   # tells python we'' be using our mars_news() func to pull this data
+   news_title, news_paragraph = mars_news(browser)
+
+   # Dict runs all scraping functions I created and stores the results in dictionary
+   data = {
+        "news_title": news_title,
+        "news_paragraph": news_paragraph,
+        "featured_image": featured_image(browser),
+        "facts": mars_facts(),
+        "last_modified": dt.datetime.now()}
+
+   # Stop webdriver and return data
+   browser.quit()
+   return data
+
 
 # ### automate visit to Mars news site
 
@@ -68,28 +87,38 @@ def featured_image(browser):
     html = browser.html
     img_soup = soup(html, 'html.parser')
 
-    # tell BS to look inside <img /> tag for an image w class of fancybox-image
-    # This is where the image we want lives- use .get('src') pulls the link to the image
-    img_url_rel = img_soup.find('img', class_='fancybox-image').get('src')
-    
+    try:
+        # tell BS to look inside <img /> tag for an image w class of fancybox-image
+        # This is where the image we want lives- use .get('src') pulls the link to the image
+        img_url_rel = img_soup.find('img', class_='fancybox-image').get('src')
 
+    except AttributeError:
+        return None
+    
     # Use the base URL to create an absolute URL
     img_url = f'https://spaceimages-mars.com/{img_url_rel}'
-    
-
-    return img_url_rel, img_url
+   
+    return img_url
 
 
 # ### Mars Facts
 
-# scrape entire table w pd function .read_html()
-# func specifically looks for and returns tables found in html specify 1st table w [0]
-df = pd.read_html('https://galaxyfacts-mars.com')[0]
-df.columns=['description', 'Mars', 'Earth']
-df.set_index('description', inplace=True)
-df
-# convert df back into html
-df.to_html()
+def mars_facts():
 
-# end automated browser session
-browser.quit()
+    try:
+        # try to scrape entire table w pd function .read_html()
+        # read_html specifically looks for and returns tables found in html specify 1st table w [0]
+        df = pd.read_html('https://galaxyfacts-mars.com')[0]
+    except BaseException:
+      return None
+
+    df.columns=['description', 'Mars', 'Earth']
+    df.set_index('description', inplace=True)
+
+    # convert df back into html format, add bootstrap
+    return df.to_html(classes="table table-striped")
+
+
+if __name__ == "__main__":
+    # If running as script, print scraped data
+    print(scrape_all())
