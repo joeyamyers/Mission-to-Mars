@@ -1,7 +1,6 @@
 # add .DS_store
 .DS_Store
 # add files
-index.html
 practice.ipynb
 .ipynb_checkpoints
 

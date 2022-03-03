@@ -15,7 +15,7 @@ def scrape_all():
    # headless = True, so we dont have to see the scraping in action
    browser = Browser('chrome', **executable_path, headless=True)
 
-   # tells python we'' be using our mars_news() func to pull this data
+   # tells python we'll be using our mars_news() func to pull this data
    news_title, news_paragraph = mars_news(browser)
 
    # Dict runs all scraping functions I created and stores the results in dictionary
