@@ -24,6 +24,7 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
+        "hemispheres": hemispheres(browser),
         "last_modified": dt.datetime.now()}
 
    # Stop webdriver and return data
@@ -116,7 +117,55 @@ def mars_facts():
     df.set_index('description', inplace=True)
 
     # convert df back into html format, add bootstrap
-    return df.to_html(classes="table table-striped")
+    return df.to_html(classes="table table-hover")
+
+# ### Hemispheres
+
+def hemispheres(browser):
+    # Use browser to visit the URL 
+    url = 'https://marshemispheres.com/'
+
+    browser.visit(url)
+
+    # Create a list to hold the images and titles.
+    hemisphere_image_urls = []
+
+    # create parent element that holds all links to full resolution images
+    hemisphere_elem = browser.find_by_css('a.product-item img')
+
+    # loop
+    for i in range(len(hemisphere_elem)):
+        hemispheres = {}
+        
+        # click on each icon to click thru to next page
+        browser.find_by_css('a.product-item img')[i].click()
+        
+        # find img
+        img = browser.find_by_text('Sample').first
+        # add to dictionary
+        hemispheres["img_url"] = img['href']
+        
+        
+        # find title
+        title = browser.find_by_css('h2.title').text
+        # add to dictionary
+        hemispheres["title"] = title
+        
+        # append to list
+        hemisphere_image_urls.append(hemispheres)
+    
+
+        # browser back
+        browser.back()
+
+
+    # Quit the browser
+    browser.quit()
+
+    # return list of hemispheres dictionaries
+    return hemisphere_image_urls
+
+
 
 
 if __name__ == "__main__":

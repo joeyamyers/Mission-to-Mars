@@ -3,7 +3,11 @@
 # add files
 practice.ipynb
 .ipynb_checkpoints
-
+index1.html
+Mission_to_Mars_Challenge_starter_code.ipynb
+Mission_to_Mars_Challenge.py
+css 
+style.css 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
